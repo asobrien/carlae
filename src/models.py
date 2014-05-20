@@ -19,10 +19,20 @@
 
 
 #----------------------------------------------------------------------------#
+# Imports.
+#----------------------------------------------------------------------------#
+
+from app import db, bcrypt
+import base64
+import urlparse
+import uuid
+import urllib2
+
+#----------------------------------------------------------------------------#
 # DB Config.
 #----------------------------------------------------------------------------#
 
-from app import db
+
 
 # Set your classes here.
 
@@ -149,7 +159,6 @@ class Url(db.Model):
 
 
 class ReverseUrl(object):
-
     def __init__(self, shortlink):
         self.shortlink = shortlink
 
