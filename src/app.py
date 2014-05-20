@@ -8,13 +8,16 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 
+# app specific
+#import models
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
 app.config.from_object('config')
-#db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 # Automatically tear down SQLAlchemy.
 '''
