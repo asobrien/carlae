@@ -4,6 +4,7 @@
 
 from flask import * # do not use '*'; actually input the dependencies.
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.bcrypt import Bcrypt
 import logging
 from logging import Formatter, FileHandler
 from forms import *
@@ -18,8 +19,10 @@ from forms import *
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 # Automatically tear down SQLAlchemy.
+# not needed with Flask-SqlAlchemy?
 '''
 @app.teardown_request
 def shutdown_session(exception=None):
@@ -44,7 +47,9 @@ def login_required(test):
 
 @app.route('/')
 def home():
-    return render_template('pages/placeholder.home.html')
+    login_form = LoginForm(request.form)
+    url_form = UrlForm(request.form)
+    return render_template('pages/index.html', login_form = login_form, url_form = url_form)
 
 @app.route('/about')
 def about():
