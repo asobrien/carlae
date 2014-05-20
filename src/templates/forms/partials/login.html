@@ -1,8 +1,11 @@
-
 {% block content %}
+<br>
 <div class="container">
-    <div class="row">
-        <div class="col-xs-6 col-xs-offset-3 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+    <div class="row-fluid">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+            <div class="well">
+                <h2>Sign In</h2>
+                <p>Go ahead and sign in... that way you can start making shortlinks. Enjoy!</p>
 
 <form method="post" class="form-horizontal" role="form">
 {{ form.name(class_ = 'form-control first-input', placeholder = form.name.label.text, required = true, autofocus = true) }}
@@ -10,14 +13,17 @@
  <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox pull-right">
-        <label>{{ form.remember(class_ = 'checkbox', required = true) }} Remember me</label>
+        <label class="small">{{ form.remember(class_ = '', required = true) }} Remember me</label>
         </div>
     </div>
  </div>
 <input type="submit" value="Sign In" class="btn btn-primary btn-lg btn-default pull-right" />
 </form>
+<br><br><br>
 
+            </div>
         </div>
     </div>
-</div>
+</div> <!-- /container -->
+<br><br>
 {% endblock %}
