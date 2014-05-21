@@ -24,9 +24,11 @@
 
 from app import db, bcrypt
 import base64
+
 import urlparse
 import uuid
 import urllib2
+from hashlib import md5
 
 #----------------------------------------------------------------------------#
 # DB Config.
@@ -122,13 +124,22 @@ class Url(db.Model):
 
     def __init__(self, source_url):
         self.source = self.cleanup_url(source_url)
-        self.shortlink = self.generate_shortlink(self.source)
-        self._make_shortlink_unique()  # short links need to unique so let's ensure this
+        self.already_exits()
+        if self.shortlink is None:
+            self.shortlink = self.generate_shortlink(self.source)
+            self._make_shortlink_unique()  # short links need to unique so let's ensure this
+            self.add_url_to_db()
 
+    def already_exits(self):
+        url = Url.query.filter_by(source=self.source).first()
+        if url is not None:
+            self.shortlink = url.shortlink
+        else:
+            self.shortlink = None
 
     def generate_shortlink(self, source_url):
         url_digest = md5(source_url).digest()
-        encode = base64.urlsafe_b64encode(url_digest)
+        encode = base64.b32encode(url_digest).lower()
         return encode[0:7]
 
     def cleanup_url(self, source_url):
