@@ -6,9 +6,12 @@ from flask import *  # do not use '*'; actually input the dependencies.
 from flask import flash, redirect
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
+from flask_reggie import Reggie  # Regex Routing
 import logging
 from logging import Formatter, FileHandler
 from forms import *
+from werkzeug.routing import BaseConverter  # for regex urls
+
 
 # app specific
 #import models
@@ -23,6 +26,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+Reggie(app)
 
 # Automatically tear down SQLAlchemy.
 # not needed with Flask-SqlAlchemy?
@@ -82,6 +86,28 @@ def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form = form)
 
+# Shortlink Handler
+
+@app.route('/<regex("[@,%40][0-9a-zA-Z]{7}"):shorturl>')
+def example(shorturl):
+    shorturl = shorturl.lstrip('@')
+    url = models.ReverseUrl(shorturl)
+    url.get_source_url()
+    if url.source is not None:
+        return redirect(url.source, code=301)  # permanent redirect
+    return render_template('errors/404.html'), 404  # shortlink not found
+
+
+# Raw DataBase Dump
+@app.route('/rawdump')
+def rawdump():
+    urls =  models.Url.query.all()
+    raw = ["shortlink, source_url"]
+    for url in urls:
+        raw.append("@%s, %s" %(url.shortlink, url.source))
+    raw_string = ('\n').join(raw)
+    return Response(raw_string, mimetype="text/plain")
+
 # Error handlers.
 
 @app.errorhandler(500)
@@ -108,7 +134,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
 
 # Or specify port manually:
 '''
