@@ -2,7 +2,8 @@
 # Imports.
 #----------------------------------------------------------------------------#
 
-from flask import * # do not use '*'; actually input the dependencies.
+from flask import *  # do not use '*'; actually input the dependencies.
+from flask import flash, redirect
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 import logging
@@ -11,6 +12,8 @@ from forms import *
 
 # app specific
 #import models
+#from forms import UrlForm
+import models
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -45,11 +48,20 @@ def login_required(test):
 # Controllers.
 #----------------------------------------------------------------------------#
 
-@app.route('/')
+# prevent resubmission of form
+
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
     login_form = LoginForm(request.form)
     url_form = UrlForm(request.form)
-    return render_template('pages/index.html', login_form = login_form, url_form = url_form)
+
+    if request.method == 'POST':
+        url = models.Url(request.form['url'])
+        flash("http://baseurl.com/" + str(url.shortlink), 'alert-info')
+        return redirect(url_for('home'))
+
+    return render_template('pages/index.html', login_form=login_form, url_form=url_form)
 
 @app.route('/about')
 def about():
@@ -58,7 +70,7 @@ def about():
 @app.route('/login')
 def login():
     form = LoginForm(request.form)
-    return render_template('forms/login.html', form = form)
+    return render_template('forms/login.html', form=form)
 
 @app.route('/register')
 def register():
@@ -74,7 +86,7 @@ def forgot():
 
 @app.errorhandler(500)
 def internal_error(error):
-    #db_session.rollback()
+    models.db.session.rollback()  # rollback db on 500 error
     return render_template('errors/500.html'), 500
 
 @app.errorhandler(404)
@@ -96,7 +108,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=False)
 
 # Or specify port manually:
 '''
