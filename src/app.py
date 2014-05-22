@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------#
 
 from flask import *  # do not use '*'; actually input the dependencies.
-from flask import flash, redirect
+from flask import flash, redirect, Markup
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 from flask_reggie import Reggie  # Regex Routing
@@ -11,7 +11,8 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 from werkzeug.routing import BaseConverter  # for regex urls
-
+import os
+import config
 
 # app specific
 #import models
@@ -62,7 +63,12 @@ def home():
 
     if request.method == 'POST':
         url = models.Url(request.form['url'])
-        flash("http://baseurl.com/" + str(url.shortlink), 'alert-info')
+        url_key = '@' + url.shortlink
+        short_url = os.path.join(config.BASE_URL, url_key)
+        # build short_url as link & stylize here
+        url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
+
+        flash(Markup(url_out), 'alert-success')
         return redirect(url_for('home'))
 
     return render_template('pages/index.html', login_form=login_form, url_form=url_form)

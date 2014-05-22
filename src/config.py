@@ -12,3 +12,8 @@ SECRET_KEY = 'my precious'
 
 # Connect to the database
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db')
+
+# Set the root URL for the site
+BASE_URL = 'http://127.0.0.1:5000'
+
+
