@@ -1,0 +1,16 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Activate{% endblock %}
+{% block content %}
+  <form method="post" class="form" name="activate account">
+       {{form.hidden_tag()}}
+    <h3 class="form-heading">Register your account<a href="{{ url_for('home') }}" title="Back to homepage"><i class="icon icon-home pull-right"></i></a></h3>
+      <p>Choose a password to complete your registration for <b>{{ email }}</b>.</p>
+      <p>Passwords must have a <b>minimum length of 6 characters</b>. You can find some good advice on <a href="https://www.schneier.com/blog/archives/2014/03/choosing_secure_1.html">choosing a strong password here.</a></p>
+    {{ form.password(class_ = 'form-control first-input', placeholder = form.password.label.text, required = true, autofocus = true) }}
+    {{ form.confirm(class_ = 'form-control', placeholder = form.confirm.label.text, required = true) }}
+    <input type="submit" value="Register" class="btn btn-primary btn-lg btn-block">
+      {% for error in form.errors.password %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}<br>
+  </form>
+{% endblock %}

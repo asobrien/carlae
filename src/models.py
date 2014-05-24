@@ -22,13 +22,22 @@
 # Imports.
 #----------------------------------------------------------------------------#
 
-from app import db, bcrypt
+from app import db
+from app import bcrypt
 import base64
 
 import urlparse
 import uuid
 import urllib2
 from hashlib import md5
+import random
+import string
+import hashlib
+import datetime
+from collections import OrderedDict
+import urllib
+import os
+from flask import Markup
 
 #----------------------------------------------------------------------------#
 # DB Config.
@@ -52,20 +61,18 @@ class User(Base):
         self.password = password
 '''
 
-
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(60), nullable=False)
 
-    def __init__(self, username):
-        self.username = username
+    def __init__(self, email):
+        self.email = email
         self.get_user_details()
 
     def get_user_details(self):
-        uname = User.query.filter_by(username=self.username).first()
+        uname = User.query.filter_by(email=self.email).first()
         if uname is not None:
             for var, val in vars(uname).iteritems():
                 setattr(self, var, val)
@@ -83,9 +90,8 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
-    def create_user(self, email, password):
-        user = User(self.username)
-        user.email = email
+    def create_user(self, password):
+        user = User(self.email)
         user.password = bcrypt.generate_password_hash(password)
         db.session.add(user)
         db.session.commit()
@@ -105,6 +111,9 @@ class User(db.Model):
     def authenticate_user(self, password):
         self.logged_in = bcrypt.check_password_hash(self.password, password)
 
+    def generate_password(self, length=10):
+        return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
+
     def change_password(self, password):
         user = User.query.get(self.id)
         user.password = bcrypt.generate_password_hash(password)  # update pass
@@ -113,6 +122,80 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
+class InviteUser(db.Model):
+    __tablename__ = "invites"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True)
+    activation_code = db.Column(db.String(64))
+    activation_date = db.Column(db.DateTime)
+    is_activated = db.Column(db.Boolean, default=False)
+
+    def __init__(self, email):
+        self.email = email
+        self.get_user_details()
+        if self.email_exists():
+            self.regenerate_activation_code()
+            self.generate_activation_url()
+        else:
+            self.generate_activation_code()
+            self.generate_activation_url()
+            self.commit()
+        self.get_user_details()  # get user details if they exist
+
+    def get_user_details(self):
+        user = InviteUser.query.filter_by(email=self.email).first()
+        if user is not None:
+            for var, val in vars(user).iteritems():
+                setattr(self, var, val)
+
+    def email_exists(self):
+        user = InviteUser.query.filter_by(email=self.email).first()
+        if user is not None:
+            return True
+        return False
+
+    def generate_activation_code(self):
+        self.activation_code = base64.urlsafe_b64encode(hashlib.sha512 \
+                                (str(random.getrandbits(1024))).digest()).rstrip('==')
+        # TODO: Ensure activation code is unique... loop until a unique solution is found. Actually, there's really no
+        # need for a unique activation_code, because it's paired with an email, and there is so much entropy there.
+        # Actually, it's best if unique... we'll deal with that later.
+
+    def generate_activation_url(self):
+        url = os.path.join(config.BASE_URL, 'activate')
+        params = {'email':self.email, "code":self.activation_code}
+        query = urllib.urlencode(params)
+        full_url = url + '?' + query
+        self.activation_url = full_url
+
+    def send_activation_email(self):
+        # GET THE LATEST FROM THE DATABASE
+        usr = InviteUser.query.get(self.id)
+        usr.generate_activation_url()
+
+        from_email = config.APP_EMAIL
+        to_list = [usr.email]
+        subject = "Activate your account"
+        message = config.INVITATION_EMAIL_TEMPLATE % (usr.activation_url)
+        mail.send_simple_message(from_email, to_list, subject, message, from_name=config.APP_EMAIL_NAME)
+
+    def commit(self):
+        self.activation_date = datetime.datetime.now()
+        db.session.add(self)
+        db.session.commit()
+
+    def regenerate_activation_code(self):
+        usr = InviteUser.query.get(self.id)
+        usr.generate_activation_code()
+        usr.generate_activation_url()
+        usr.activation_date = datetime.datetime.now()
+        db.session.commit()
+
+
+
+import mail
+import config
 
 
 class Url(db.Model):

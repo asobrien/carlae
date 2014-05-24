@@ -1,15 +1,17 @@
 from flask_wtf import Form
 from wtforms import TextField, DateField, IntegerField, \
         SelectField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.validators import DataRequired, EqualTo, Length, Required
+import random
+import string
+
+from models import InviteUser
 
 # Set your classes here.
 
 class RegisterForm(Form):
-    name        = TextField('Username', validators = [DataRequired(), Length(min=6, max=25)])
+    name        = TextField('Username', validators = [DataRequired(), Length(min=2, max=25)])
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
-    password    = PasswordField('Password', validators = [DataRequired(), Length(min=6, max=40)])
-    confirm     = PasswordField('Repeat Password', [DataRequired(), EqualTo('password', message='Passwords must match')])
 
 class LoginForm(Form):
     name        = TextField('Username', [DataRequired()])
@@ -23,5 +25,15 @@ class AddUserForm(Form):
     name        = TextField('Username', validators = [DataRequired(), Length(min=6, max=25)])
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
 
+class InviteUserForm(Form):
+    email        = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
+
 class UrlForm(Form):
     url = TextField('http://', validators = [DataRequired(), Length(min=3, max=1500)])
+
+class ActivateUserForm(Form):
+    password    = PasswordField('Password', [Required(),
+                                             Length(min=6, max=-1, message="Passwords must be at least 6 characters."),
+                                             EqualTo('confirm', message='Passwords must match.')])
+    confirm     = PasswordField('Confirm Password', [Required(), Length(min=6, max=-1)])
+

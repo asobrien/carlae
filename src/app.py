@@ -13,11 +13,14 @@ from forms import *
 from werkzeug.routing import BaseConverter  # for regex urls
 import os
 import config
+import datetime
 
 # app specific
 #import models
 #from forms import UrlForm
 import models
+
+
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -82,15 +85,86 @@ def login():
     form = LoginForm(request.form)
     return render_template('forms/login.html', form=form)
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
+    if request.method == 'POST':
+
+        user = models.User(request.form['name'])
+        password = user.generate_password()
+        user.create_user(request.form['email'], password)
+        message = "User: %s\nPassword: %s" % (user.username, password)
+        flash(message, category="alert-info")
+        return redirect(url_for('home'))
     return render_template('forms/register.html', form = form)
+
+@app.route('/invite', methods=['GET', 'POST'])
+def invite():
+    form = InviteUserForm(request.form)
+    if request.method == 'POST':
+        user = models.InviteUser(request.form['email'])
+        if user.is_activated:
+            message = Markup("<b>%s</b> has already activated an account" % user.email)
+            flash(message, category='alert-danger')
+            return redirect(url_for('invite'))
+        user.send_activation_email()
+        message = Markup("An invitation email has been sent to <b>%s</b>" % user.email)
+        flash(message, category='alert-success')
+        return redirect(url_for('invite'))
+
+    return render_template('forms/invite.html', form = form)
 
 @app.route('/forgot')
 def forgot():
     form = ForgotForm(request.form)
     return render_template('forms/forgot.html', form = form)
+
+@app.route('/activate', methods=['GET', 'POST'])
+def activate():
+    email = request.args.get('email')
+    code = request.args.get('code')
+
+    check_code = models.InviteUser.query.filter_by(activation_code=code).first()
+    check_email = models.InviteUser.query.filter_by(email=email).first()
+    check = check_email
+
+
+    # Email & code must be in database
+    if check_code is None or check_email is None:
+        flash(Markup("<b>Invalid activation code</b>. Please request a new invitation."),
+              category='alert-danger')
+        return redirect(url_for('home'))
+    else:
+        check_code = check_code.activation_code
+        check_email = check_email.email
+    # Activation & email must match db values
+    if not (check.activation_code==code) and (check_email==email):
+        flash(Markup("<b>Invalid activation code</b>. Please request a new invitation."),
+              category='alert-danger')
+        return redirect(url_for('home'))
+
+    # Activation must not be expired
+    elapsed_time = datetime.datetime.now() - check.activation_date
+    if elapsed_time > datetime.timedelta(weeks=2):
+        # TODO: Set config with activation expiration option, currently 2 weeks.
+        flash(Markup("<b>Expired activation code</b>. Please request a new invitation."),
+              category='alert-danger')
+        return redirect(url_for('home'))
+
+    # Activate the form
+    form = ActivateUserForm(request.form)
+    if form.validate_on_submit():
+        # now we create the new user
+        usr = models.User(email)
+        usr.create_user(request.form['password'])
+        # change activation status
+        inv = models.InviteUser.query.get(check.id)
+        inv.is_activated = True
+        models.db.session.commit()
+        message = Markup("<b>%s</b> has been successfully activated. You're good to go!" % usr.email)
+        flash(Markup(message), 'alert-success')
+        return redirect(url_for('home'))
+    return render_template('forms/activate.html', form=form, email=email)
 
 # Shortlink Handler
 
