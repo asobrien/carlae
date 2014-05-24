@@ -98,6 +98,7 @@ def register():
         return redirect(url_for('home'))
     return render_template('forms/register.html', form = form)
 
+
 @app.route('/invite', methods=['GET', 'POST'])
 def invite():
     form = InviteUserForm(request.form)
@@ -107,12 +108,23 @@ def invite():
             message = Markup("<b>%s</b> has already activated an account" % user.email)
             flash(message, category='alert-danger')
             return redirect(url_for('invite'))
-        user.send_activation_email()
+        try:
+            mailgun = user.send_activation_email()
+        except:
+            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite." % user.email)
+            flash(message, category='alert-danger')
+            return redirect(url_for('invite'))
+        if mailgun.status_code != 200:
+            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite." % user.email)
+            flash(message, category='alert-danger')
+            return redirect(url_for('invite'))
+        
         message = Markup("An invitation email has been sent to <b>%s</b>" % user.email)
         flash(message, category='alert-success')
         return redirect(url_for('invite'))
 
     return render_template('forms/invite.html', form = form)
+
 
 @app.route('/forgot')
 def forgot():

@@ -178,7 +178,7 @@ class InviteUser(db.Model):
         to_list = [usr.email]
         subject = "Activate your account"
         message = config.INVITATION_EMAIL_TEMPLATE % (usr.activation_url)
-        mail.send_simple_message(from_email, to_list, subject, message, from_name=config.APP_EMAIL_NAME)
+        return mail.send_simple_message(from_email, to_list, subject, message, from_name=config.APP_EMAIL_NAME)
 
     def commit(self):
         self.activation_date = datetime.datetime.now()
