@@ -6,6 +6,7 @@ import random
 import string
 
 from models import InviteUser
+import models
 
 # Set your classes here.
 
@@ -17,6 +18,29 @@ class LoginForm(Form):
     email        = TextField('Email', [DataRequired()])
     password    = PasswordField('Password', [DataRequired()])
     remember    = BooleanField('Remember Me', default=True)
+
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+        self.user = None
+
+    def validate(self):
+        rv = Form.validate(self)
+        if not rv:
+            return False
+
+        user = models.User.query.filter_by(
+            email=self.email.data).first()
+        if user is None:
+            self.email.errors.append('Unknown email address.')
+            return False
+
+        if not user.check_password(self.password.data):
+            self.password.errors.append('Invalid password.')
+            return False
+
+        self.user = user
+        return True
+
 
 class ForgotForm(Form):
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])

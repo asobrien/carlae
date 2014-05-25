@@ -19,7 +19,11 @@
     </div>
  </div>
 <input type="submit" value="Sign In" class="btn btn-primary btn-lg btn-default pull-right" />
-{% for error in login_form.errors.password %}
+
+    {% for error in login_form.errors.email %}
+<span style="color: red;">{{ error }}</span>
+{% endfor %}
+    {% for error in login_form.errors.password %}
 <span style="color: red;">{{ error }}</span>
 {% endfor %}<br>
 </form>

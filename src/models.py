@@ -108,8 +108,8 @@ class User(db.Model):
         # how do we reset an instance (or kill it)
         pass
 
-    def authenticate_user(self, password):
-        self.logged_in = bcrypt.check_password_hash(self.password, password)
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
     def generate_password(self, length=10):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))

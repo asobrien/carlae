@@ -15,7 +15,8 @@ import os
 import config
 import datetime
 from flask.ext.login import LoginManager
-from flask.ext.login import login_user, logout_user, current_user, login_required
+# from flask.ext.login import login_user, logout_user, current_user, login_required, fresh_login_required
+from flask.ext.login import login_user, logout_user, login_required
 
 # app specific
 #import models
@@ -38,12 +39,19 @@ Reggie(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# Set cookie expiration, etc
+# src: http://stackoverflow.com/questions/13831251/flask-login-chrome-ignoring-cookie-expiration
+# app.PERMANENT_SESSION_LIFETIME = datetime.timedelta(seconds=5)
+
 # login_manager.login_message_category = "alert-info"
 
 # user_loader callback
 @login_manager.user_loader
 def load_user(userid):
     return models.User.query.get(userid)
+
+# No cached headers?
+# app.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
 
 # Automatically tear down SQLAlchemy.
 # not needed with Flask-SqlAlchemy?
@@ -79,6 +87,8 @@ def logintest():
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    # Cookie expiration, force refresh etc
+    # session.permanent = True
 
     login_form = LoginForm(request.form)
     url_form = UrlForm(request.form)
@@ -93,14 +103,14 @@ def home():
             remember_me = True
 
 
-        return '%s' % remember_me
+        # return '%s' % remember_me
+        # user = models.User(request.form['email'])
+        # if user is None:
+        #     flash("Email address is incorrect.", "alert-danger")
+        #     return redirect(url_for('home'))
         user = models.User(request.form['email'])
-        if user is None:
-            flash("Email address is incorrect.", "alert-danger")
-            return redirect(url_for('home'))
-
         login_user(user, remember=remember_me)
-        flash("Logged in successfully.", "alert-success")
+        flash("Logged in successfully.", category="alert-success")
         return redirect(request.args.get("next") or url_for("home"))
     return render_template("pages/index.html", login_form=login_form)
 
@@ -116,14 +126,21 @@ def home():
     #
     # return render_template('pages/index.html', login_form=login_form, url_form=url_form)
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()  # logouts out user, deletes cookies, etc.
+    flash(Markup("<b>Goodbye!</b> You've been logged out."), "alert-success")
+    return redirect(url_for('home'))
+
 @app.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
 
-@app.route('/login')
-def login():
-    form = LoginForm(request.form)
-    return render_template('forms/login.html', form=form)
+# @app.route('/login')
+# def login():
+#     form = LoginForm(request.form)
+#     return render_template('forms/login.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
