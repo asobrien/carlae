@@ -14,7 +14,7 @@ class RegisterForm(Form):
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
 
 class LoginForm(Form):
-    name        = TextField('Username', [DataRequired()])
+    email        = TextField('Email', [DataRequired()])
     password    = PasswordField('Password', [DataRequired()])
     remember    = BooleanField('Remember Me', default=True)
 

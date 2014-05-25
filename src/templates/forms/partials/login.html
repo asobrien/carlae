@@ -8,16 +8,20 @@
                 <p>Go ahead and sign in... that way you can start making shortlinks. Enjoy!</p>
 
 <form method="post" class="form-horizontal" role="form">
-{{ login_form.name(class_ = 'form-control first-input', placeholder = login_form.name.label.text, required = true, autofocus = true) }}
+{{login_form.hidden_tag()}}
+{{ login_form.email(class_ = 'form-control first-input', placeholder = login_form.email.label.text, required = true, autofocus = true) }}
 {{ login_form.password(class_ = 'form-control last-input', placeholder = login_form.password.label.text, required = true) }}
  <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox pull-right">
-        <label class="small">{{ login_form.remember(class_ = '', required = true) }} Remember me</label>
+        <label class="small">{{ login_form.remember(class_ = '') }} Remember me</label>
         </div>
     </div>
  </div>
 <input type="submit" value="Sign In" class="btn btn-primary btn-lg btn-default pull-right" />
+{% for error in login_form.errors.password %}
+<span style="color: red;">{{ error }}</span>
+{% endfor %}<br>
 </form>
 <br><br><br>
 

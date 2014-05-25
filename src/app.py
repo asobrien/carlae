@@ -14,11 +14,14 @@ from werkzeug.routing import BaseConverter  # for regex urls
 import os
 import config
 import datetime
+from flask.ext.login import LoginManager
+from flask.ext.login import login_user, logout_user, current_user, login_required
 
 # app specific
 #import models
 #from forms import UrlForm
 import models
+
 
 
 
@@ -31,6 +34,16 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 Reggie(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# login_manager.login_message_category = "alert-info"
+
+# user_loader callback
+@login_manager.user_loader
+def load_user(userid):
+    return models.User.query.get(userid)
 
 # Automatically tear down SQLAlchemy.
 # not needed with Flask-SqlAlchemy?
@@ -58,23 +71,50 @@ def login_required(test):
 
 # prevent resubmission of form
 
+@app.route("/logintest")
+@login_required
+def logintest():
+    return "You are logged in! That What this message means."
+
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def home():
+
     login_form = LoginForm(request.form)
     url_form = UrlForm(request.form)
 
-    if request.method == 'POST':
-        url = models.Url(request.form['url'])
-        url_key = '@' + url.shortlink
-        short_url = os.path.join(config.BASE_URL, url_key)
-        # build short_url as link & stylize here
-        url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
+    if login_form.validate_on_submit():
+        # login and validate the user...
 
-        flash(Markup(url_out), 'alert-success')
-        return redirect(url_for('home'))
+        # set the boolean checkbox
+        # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
+        remember_me = False
+        if 'remember' in request.form:
+            remember_me = True
 
-    return render_template('pages/index.html', login_form=login_form, url_form=url_form)
+
+        return '%s' % remember_me
+        user = models.User(request.form['email'])
+        if user is None:
+            flash("Email address is incorrect.", "alert-danger")
+            return redirect(url_for('home'))
+
+        login_user(user, remember=remember_me)
+        flash("Logged in successfully.", "alert-success")
+        return redirect(request.args.get("next") or url_for("home"))
+    return render_template("pages/index.html", login_form=login_form)
+
+    # if request.method == 'POST':
+    #     url = models.Url(request.form['url'])
+    #     url_key = '@' + url.shortlink
+    #     short_url = os.path.join(config.BASE_URL, url_key)
+    #     # build short_url as link & stylize here
+    #     url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
+    #
+    #     flash(Markup(url_out), 'alert-success')
+    #     return redirect(url_for('home'))
+    #
+    # return render_template('pages/index.html', login_form=login_form, url_form=url_form)
 
 @app.route('/about')
 def about():
