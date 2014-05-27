@@ -16,7 +16,7 @@ import config
 import datetime
 from flask.ext.login import LoginManager
 # from flask.ext.login import login_user, logout_user, current_user, login_required, fresh_login_required
-from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.login import login_user, logout_user, login_required, current_user
 
 # app specific
 #import models
@@ -79,10 +79,14 @@ def login_required(test):
 
 # prevent resubmission of form
 
+@app.before_request
+def before_request():
+    g.user = current_user
+
 @app.route("/logintest")
 @login_required
 def logintest():
-    return "You are logged in! That What this message means."
+    return "Logged in"
 
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
@@ -90,29 +94,45 @@ def home():
     # Cookie expiration, force refresh etc
     # session.permanent = True
 
-    login_form = LoginForm(request.form)
-    url_form = UrlForm(request.form)
-
-    if login_form.validate_on_submit():
-        # login and validate the user...
-
-        # set the boolean checkbox
-        # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
-        remember_me = False
-        if 'remember' in request.form:
-            remember_me = True
 
 
-        # return '%s' % remember_me
-        # user = models.User(request.form['email'])
-        # if user is None:
-        #     flash("Email address is incorrect.", "alert-danger")
-        #     return redirect(url_for('home'))
-        user = models.User(request.form['email'])
-        login_user(user, remember=remember_me)
-        flash("Logged in successfully.", category="alert-success")
-        return redirect(request.args.get("next") or url_for("home"))
-    return render_template("pages/index.html", login_form=login_form)
+    # Display the URL shortcode form if there is authenticated user
+    if g.user.is_authenticated():
+        url_form = UrlForm(request.form)
+        if url_form.validate_on_submit():
+            url = models.Url(request.form['url'])
+            url_key = '@' + url.shortlink
+            short_url = os.path.join(config.BASE_URL, url_key)
+            # build short_url as link & stylize here
+            url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
+
+            flash(Markup(url_out), 'alert-success')
+            return redirect(url_for('home'))
+        return render_template("pages/index.html", form=url_form)
+
+    else:
+        login_form = LoginForm(request.form)
+        if login_form.validate_on_submit():
+            # login and validate the user...
+
+            # set the boolean checkbox
+            # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
+            remember_me = False
+            if 'remember' in request.form:
+                remember_me = True
+
+
+            # return '%s' % remember_me
+            # user = models.User(request.form['email'])
+            # if user is None:
+            #     flash("Email address is incorrect.", "alert-danger")
+            #     return redirect(url_for('home'))
+            user = models.User(request.form['email'])
+            login_user(user, remember=remember_me)
+            flash("Logged in successfully.", category="alert-success")
+            return redirect(request.args.get("next") or url_for("home"))
+
+        return render_template("pages/index.html", form=login_form)
 
     # if request.method == 'POST':
     #     url = models.Url(request.form['url'])
@@ -283,7 +303,7 @@ if not app.debug:
 
 # Default port:
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
 
 # Or specify port manually:
 '''

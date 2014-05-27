@@ -120,7 +120,7 @@ class User(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.email
 
 
 class InviteUser(db.Model):

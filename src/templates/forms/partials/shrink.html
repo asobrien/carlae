@@ -7,9 +7,10 @@
 
                 <h3 class="text-center">LESS IS MORE</h3>
 <form method="post" class="form-horizontal" role="form">
+    {{form.hidden_tag()}}
                 <div class="row-fluid">
               <div class="input-group input-group-lg">
-                  {{ url_form.url(class_ = 'form-control', placeholder = url_form.url.label.text, required = true) }}
+                  {{ form.url(class_ = 'form-control', placeholder = form.url.label.text, required = true) }}
                 <span class="input-group-btn">
                   <button type="submit" value="Submit" class="btn btn-success">
                       <span class="glyphicon glyphicon-link" style="font-size: 25px; vertical-align:middle;"></span>
@@ -17,6 +18,9 @@
                 </span>
               </div>
             </div>
+        {% for error in form.errors.url %}
+<span style="color: red;">{{ error }}</span>
+{% endfor %}<br>
     </form>
 <br>
             </div>

@@ -8,9 +8,13 @@
 
 <p class="lead">This is a URL shortener based on the flask framework. You can find out more here.</p>
 
+{% if g.user.is_authenticated() %}
+{% include 'forms/partials/shrink.html' %}
+{% endif %}
 
-{% include 'forms/partials/login.html' %}
-
+{% if not g.user.is_authenticated() %}
+        {% include 'forms/partials/login.html' %}
+{% endif %}
 
 
 
