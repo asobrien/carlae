@@ -1,0 +1,36 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Top 10 Shortlinks</h1>
+</div>
+
+<p class="lead">The <b>Top 10</b> shortlinks for this service are shown below.</p>
+
+<br>
+<table class="table table-striped">
+<thead>
+        <tr>
+          <th>Rank</th>
+          <th>Hits</th>
+          <th>Shortlink</th>
+          <th>Source Url</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for url in urls %}
+
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ url.counter }}</td>
+          <td>{{ url.shortlink }}</td>
+          <td><a href="{{ url.source }}" title="{{ url.shortlink }}">{{ url.source }}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+</table>
+
+<br><br>
+
+{% endblock %}

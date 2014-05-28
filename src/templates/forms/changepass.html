@@ -1,0 +1,14 @@
+{% extends 'layouts/form.html' %}
+{% block title %}Change Password{% endblock %}
+{% block content %}
+  <form method="post" class="form">
+      {{form.hidden_tag()}}
+    <h3 class="form-heading">Change Password <a href="{{ url_for('home') }}" title="Back to homepage"><i class="icon icon-home pull-right"></i></a></h3>
+    {{ form.password(class_ = 'form-control first-input', placeholder = form.password.label.text, required = true, autofocus = true) }}
+    {{ form.confirm(class_ = 'form-control', placeholder = form.confirm.label.text, required = true) }}
+    <input type="submit" value="Change Password" class="btn btn-primary btn-lg btn-block">
+            {% for error in form.errors.password %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}<br>
+  </form>
+{% endblock %}

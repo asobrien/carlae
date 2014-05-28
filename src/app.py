@@ -16,7 +16,7 @@ import config
 import datetime
 from flask.ext.login import LoginManager
 # from flask.ext.login import login_user, logout_user, current_user, login_required, fresh_login_required
-from flask.ext.login import login_user, logout_user, login_required, current_user
+from flask.ext.login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 # app specific
 #import models
@@ -129,7 +129,7 @@ def home():
             #     return redirect(url_for('home'))
             user = models.User(request.form['email'])
             login_user(user, remember=remember_me)
-            flash("Logged in successfully.", category="alert-success")
+            # flash("Logged in successfully.", category="alert-success")
             return redirect(request.args.get("next") or url_for("home"))
 
         return render_template("pages/index.html", form=login_form)
@@ -146,21 +146,41 @@ def home():
     #
     # return render_template('pages/index.html', login_form=login_form, url_form=url_form)
 
+# fresh login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    login_form = LoginForm(request.form)
+    if login_form.validate_on_submit():
+        # login and validate the user...
+
+        # set the boolean checkbox
+        # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
+        remember_me = False
+        if 'remember' in request.form:
+            remember_me = True
+
+
+        # return '%s' % remember_me
+        # user = models.User(request.form['email'])
+        # if user is None:
+        #     flash("Email address is incorrect.", "alert-danger")
+        #     return redirect(url_for('home'))
+        user = models.User(request.form['email'])
+        login_user(user, remember=remember_me)
+        # flash("Logged in successfully.", category="alert-success")
+        return redirect(request.args.get("next") or url_for("home"))
+    return render_template('forms/login.html', form=login_form)
+
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()  # logouts out user, deletes cookies, etc.
-    flash(Markup("<b>Goodbye!</b> You've been logged out."), "alert-success")
+    # flash(Markup("<b>Goodbye!</b> You've been logged out."), "alert-success")
     return redirect(url_for('home'))
 
 @app.route('/about')
 def about():
     return render_template('pages/placeholder.about.html')
-
-# @app.route('/login')
-# def login():
-#     form = LoginForm(request.form)
-#     return render_template('forms/login.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -276,6 +296,28 @@ def rawdump():
         raw.append("@%s, %s" %(url.shortlink, url.source))
     raw_string = ('\n').join(raw)
     return Response(raw_string, mimetype="text/plain")
+
+@app.route('/top10')
+def top10():
+    top_urls =  models.Url.query.order_by(models.Url.counter.desc()).limit(10).all()
+    return render_template('pages/top10.html', urls=top_urls)
+
+login_manager.refresh_view = "login"
+login_manager.needs_refresh_message = (
+    u"To protect your account, please reauthenticate to access this page."
+)
+login_manager.needs_refresh_message_category = "alert-info"
+
+@app.route('/changepassword', methods=['GET', 'POST'])
+@fresh_login_required
+def changepassword():
+    pass_form = ActivateUserForm(request.form)
+    if pass_form.validate_on_submit():
+        user = g.user
+        user.change_password(request.form['password'])
+        flash("Your password has been successfully changed!", 'alert-success')
+        return redirect(url_for('home'))
+    return render_template('forms/changepass.html', form=pass_form)
 
 # Error handlers.
 

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, EqualTo, Length, Required
 import random
 import string
 
-from models import InviteUser
+# from models import InviteUser
 import models
 
 # Set your classes here.
