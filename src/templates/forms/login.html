@@ -4,7 +4,7 @@
   <form method="post" class="form">
     <h3 class="form-heading">Login <a href="{{ url_for('home') }}" title="Back to homepage"><i class="icon icon-home pull-right"></i></a></h3>
 {{form.hidden_tag()}}
-{{ form.email(class_ = 'form-control first-input', placeholder = form.email.label.text, required = true, autofocus = true) }}
+{{ form.email(class_ = 'form-control first-input', placeholder = form.email.label.text, required = true, autofocus = true, type="email") }}
 {{ form.password(class_ = 'form-control last-input', placeholder = form.password.label.text, required = true) }}
 
     <input type="submit" value="Submit" class="btn btn-primary btn-lg btn-block">

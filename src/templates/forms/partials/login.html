@@ -9,7 +9,7 @@
 
 <form method="post" class="form-horizontal" role="form">
 {{form.hidden_tag()}}
-{{ form.email(class_ = 'form-control first-input', placeholder = form.email.label.text, required = true, autofocus = true) }}
+{{ form.email(class_ = 'form-control first-input', placeholder = form.email.label.text, required = true, autofocus = true, type="email") }}
 {{ form.password(class_ = 'form-control last-input', placeholder = form.password.label.text, required = true) }}
  <div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
