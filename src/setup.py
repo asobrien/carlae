@@ -1,7 +1,7 @@
+from models import db
 
-# Create the database
-from app import db
-db.create_all()  # Boom, there is the database!
+def create_db():
+    db.create_all()  # Boom, there is the database!
 
 def create_user(email, password):
     from models import User
