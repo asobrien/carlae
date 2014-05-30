@@ -1,23 +1,3 @@
-##########################
-# This is declarative
-#
-#from sqlalchemy import create_engine
-#from sqlalchemy.orm import scoped_session, sessionmaker
-#from sqlalchemy.ext.declarative import declarative_base
-#from sqlalchemy import Column, Integer, String
-#from app import db
-#
-#engine = create_engine('sqlite:///database.db', echo=True)
-#db_session = scoped_session(sessionmaker(autocommit=False,
-#                                         autoflush=False,
-#                                         bind=engine))
-#Base = declarative_base()
-#Base.query = db_session.query_property()
-#
-# END OF DECLARATIVE
-###########################
-
-
 #----------------------------------------------------------------------------#
 # Imports.
 #----------------------------------------------------------------------------#
@@ -25,19 +5,14 @@
 from app import db
 from app import bcrypt
 import base64
-
 import urlparse
 import uuid
-import urllib2
-from hashlib import md5
 import random
 import string
 import hashlib
 import datetime
-from collections import OrderedDict
 import urllib
 import os
-from flask import Markup
 import mail
 import config
 import shortener
@@ -46,23 +21,7 @@ import shortener
 # DB Config.
 #----------------------------------------------------------------------------#
 
-
-
 # Set your classes here.
-
-'''
-class User(Base):
-    __tablename__ = 'Users'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True)
-    email = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(30))
-
-    def __init__(self, name=None, password=None):
-        self.name = name
-        self.password = password
-'''
 
 class User(db.Model):
     __tablename__ = "users"
@@ -206,16 +165,12 @@ class Url(db.Model):
     counter = db.Column(db.Integer, default=0)
 
     def __init__(self, source_url):
-        # commit the source_url (if not exists)
-        # get the id
-        # generate the shortlink
-        # commit the shortlink
         self.source = self.cleanup_url(source_url)
         self.already_exits()
         if self.shortlink is None:
             self.add_url_to_db()  # commits to db, get an id this way
             self.generate_shortlink()
-            db.session.commit() # update the db
+            db.session.commit()  # update the db
 
     def already_exits(self):
         url = Url.query.filter_by(source=self.source).first()
@@ -227,10 +182,6 @@ class Url(db.Model):
             self.shortlink = None
 
     def generate_shortlink(self):
-        # Provides 34359738368 unique combinations
-        # url_digest = md5(source_url).digest()
-        # encode = base64.b32encode(url_digest).lower()
-        # return encode[0:7]
         self.shortlink = shortener.encode_id(self.id)
 
     def cleanup_url(self, source_url):
@@ -242,7 +193,7 @@ class Url(db.Model):
         pass
 
     def check_protocol(self, url):
-        return url if "://" in url else "http://" + url
+        return url if (url.lower().startswith('http://') or url.lower().startswith('https://')) else "http://" + url
 
     def _make_shortlink_unique(self):
         shortlink = self.shortlink
@@ -275,8 +226,3 @@ class ReverseUrl(object):
         rec = Url.query.get(self.id)
         rec.counter = rec.counter + 1
         db.session.commit()
-
-
-
-# Create tables.
-#Base.metadata.create_all(bind=engine)
