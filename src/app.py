@@ -10,17 +10,13 @@ from flask_reggie import Reggie  # Regex Routing
 import logging
 from logging import Formatter, FileHandler
 from forms import *
-from werkzeug.routing import BaseConverter  # for regex urls
 import os
 import config
 import datetime
 from flask.ext.login import LoginManager
-# from flask.ext.login import login_user, logout_user, current_user, login_required, fresh_login_required
 from flask.ext.login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 # app specific
-#import models
-#from forms import UrlForm
 import models
 
 
@@ -45,60 +41,27 @@ login_manager.needs_refresh_message = (
     u"To protect your account, please reauthenticate to access this page.")
 login_manager.needs_refresh_message_category = "alert-info"
 
-# Set cookie expiration, etc
-# src: http://stackoverflow.com/questions/13831251/flask-login-chrome-ignoring-cookie-expiration
-# app.PERMANENT_SESSION_LIFETIME = datetime.timedelta(seconds=5)
-
-# login_manager.login_message_category = "alert-info"
-
 # user_loader callback
 @login_manager.user_loader
 def load_user(userid):
     return models.User.query.get(userid)
 
-# No cached headers?
-# app.response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
-
-# Automatically tear down SQLAlchemy.
-# not needed with Flask-SqlAlchemy?
-'''
-@app.teardown_request
-def shutdown_session(exception=None):
-    db_session.remove()
-'''
-
 # @app.teardown_request
 # def shutdown_session(exception=None):
 #     db_session.remove()
 
-# Login required decorator.
-'''
-def login_required(test):
-    @wraps(test)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return test(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
-'''
+
+
+
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
-
-# prevent resubmission of form
 
 @app.before_request
 def before_request():
     g.user = current_user
 
-@app.route("/logintest")
-@login_required
-def logintest():
-    return "Logged in"
 
-# @app.route('/index', methods=['GET', 'POST'])
 @app.route('/+', methods=['GET', 'POST'])
 def home():
     # Display the URL shortcode form if there is authenticated user
@@ -110,33 +73,21 @@ def home():
             short_url = os.path.join(config.BASE_URL, url_key)
             # build short_url as link & stylize here
             url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
-
             flash(Markup(url_out), 'alert-success')
             return redirect(url_for('home'))
         return render_template("pages/index.html", form=url_form)
-
     else:
         login_form = LoginForm(request.form)
         if login_form.validate_on_submit():
             # login and validate the user...
-
             # set the boolean checkbox
             # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
             remember_me = False
             if 'remember' in request.form:
                 remember_me = True
-
-
-            # return '%s' % remember_me
-            # user = models.User(request.form['email'])
-            # if user is None:
-            #     flash("Email address is incorrect.", "alert-danger")
-            #     return redirect(url_for('home'))
             user = models.User(request.form['email'])
             login_user(user, remember=remember_me)
-            # flash("Logged in successfully.", category="alert-success")
             return redirect(request.args.get("next") or url_for("home"))
-
         return render_template("pages/index.html", form=login_form)
 
 
@@ -146,41 +97,33 @@ def login():
     login_form = LoginForm(request.form)
     if login_form.validate_on_submit():
         # login and validate the user...
-
         # set the boolean checkbox
         # http://nesv.blogspot.com/2011/10/flask-gotcha-with-html-forms-checkboxes.html
         remember_me = False
         if 'remember' in request.form:
             remember_me = True
-
-
-        # return '%s' % remember_me
-        # user = models.User(request.form['email'])
-        # if user is None:
-        #     flash("Email address is incorrect.", "alert-danger")
-        #     return redirect(url_for('home'))
         user = models.User(request.form['email'])
         login_user(user, remember=remember_me)
-        # flash("Logged in successfully.", category="alert-success")
         return redirect(request.args.get("next") or url_for("home"))
     return render_template('forms/login.html', form=login_form)
+
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()  # logouts out user, deletes cookies, etc.
-    # flash(Markup("<b>Goodbye!</b> You've been logged out."), "alert-success")
     return redirect(url_for('home'))
+
 
 @app.route('/about')
 def about():
     return render_template('pages/about.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST':
-
         user = models.User(request.form['name'])
         password = user.generate_password()
         user.create_user(request.form['email'], password)
@@ -218,11 +161,6 @@ def invite():
 
     return render_template('forms/invite.html', form = form)
 
-# Not currently implemented
-# @app.route('/forgot')
-# def forgot():
-#     form = ForgotForm(request.form)
-#     return render_template('forms/forgot.html', form = form)
 
 @app.route('/activate', methods=['GET', 'POST'])
 def activate():
@@ -293,6 +231,7 @@ def rawdump():
     raw_string = ('\n').join(raw)
     return Response(raw_string, mimetype="text/plain")
 
+
 @app.route('/top10')
 def top10():
     top_urls = models.Url.query.order_by(models.Url.counter.desc()).limit(10).all()
@@ -322,6 +261,7 @@ def internal_error(error):
 def internal_error(error):
     return render_template('errors/404.html'), 404
 
+
 if not app.debug:
     file_handler = FileHandler('error.log')
     file_handler.setFormatter(Formatter('%(asctime)s %(levelname)s: %(message)s '
@@ -331,6 +271,9 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
 
+
+
+
 #----------------------------------------------------------------------------#
 # Launch.
 #----------------------------------------------------------------------------#
@@ -338,10 +281,3 @@ if not app.debug:
 # Default port:
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
-# Or specify port manually:
-'''
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-'''

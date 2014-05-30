@@ -34,6 +34,7 @@ def send_simple_message(from_email, to_list, subject, message, from_name=None):
               "subject": subject,
               "text": message})
 
+
 def build_sender(from_email, from_name):
     if from_name is None:
         return from_email

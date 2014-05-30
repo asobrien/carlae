@@ -1,18 +1,16 @@
 from flask_wtf import Form
-from wtforms import TextField, DateField, IntegerField, \
-        SelectField, PasswordField, BooleanField
+from wtforms import TextField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, EqualTo, Length, Required
-import random
-import string
-
-# from models import InviteUser
 import models
+
+
 
 # Set your classes here.
 
 class RegisterForm(Form):
     name        = TextField('Username', validators = [DataRequired(), Length(min=2, max=25)])
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
+
 
 class LoginForm(Form):
     email        = TextField('Email', [DataRequired()])
@@ -45,15 +43,19 @@ class LoginForm(Form):
 class ForgotForm(Form):
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
 
+
 class AddUserForm(Form):
     name        = TextField('Username', validators = [DataRequired(), Length(min=6, max=25)])
     email       = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
 
+
 class InviteUserForm(Form):
     email        = TextField('Email', validators = [DataRequired(), Length(min=6, max=40)])
 
+
 class UrlForm(Form):
     url = TextField('http://', validators = [DataRequired(), Length(min=3, max=1500)])
+
 
 class ActivateUserForm(Form):
     password    = PasswordField('Password', [Required(),
