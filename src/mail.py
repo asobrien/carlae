@@ -2,14 +2,15 @@ __author__ = 'aobrien'
 
 """This module incorporates email sending using mailgun."""
 
-import config
 import requests
+import config
+import private  # TODO: remove import; `private` is for dev purposes only
 
 # Enter the domain associated with your Mailgun account here
-DOMAIN = "sandbox4720.mailgun.org"
+DOMAIN = private.MAILGUN_DOMAIN
 
 # Enter your Mailgun API Key here
-API_KEY = "key-0gzpvzvv3jr2owvh-hpcy-oq--gwu888"
+API_KEY = private.MAILGUN_API_KEY
 
 def send_simple_message(from_email, to_list, subject, message, from_name=None):
     """
