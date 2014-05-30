@@ -39,6 +39,12 @@ Reggie(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# login manager settings.
+login_manager.refresh_view = "login"
+login_manager.needs_refresh_message = (
+    u"To protect your account, please reauthenticate to access this page.")
+login_manager.needs_refresh_message_category = "alert-info"
+
 # Set cookie expiration, etc
 # src: http://stackoverflow.com/questions/13831251/flask-login-chrome-ignoring-cookie-expiration
 # app.PERMANENT_SESSION_LIFETIME = datetime.timedelta(seconds=5)
@@ -60,6 +66,10 @@ def load_user(userid):
 def shutdown_session(exception=None):
     db_session.remove()
 '''
+
+# @app.teardown_request
+# def shutdown_session(exception=None):
+#     db_session.remove()
 
 # Login required decorator.
 '''
@@ -88,14 +98,9 @@ def before_request():
 def logintest():
     return "Logged in"
 
-@app.route('/index', methods=['GET', 'POST'])
-@app.route('/', methods=['GET', 'POST'])
+# @app.route('/index', methods=['GET', 'POST'])
+@app.route('/+', methods=['GET', 'POST'])
 def home():
-    # Cookie expiration, force refresh etc
-    # session.permanent = True
-
-
-
     # Display the URL shortcode form if there is authenticated user
     if g.user.is_authenticated():
         url_form = UrlForm(request.form)
@@ -134,19 +139,8 @@ def home():
 
         return render_template("pages/index.html", form=login_form)
 
-    # if request.method == 'POST':
-    #     url = models.Url(request.form['url'])
-    #     url_key = '@' + url.shortlink
-    #     short_url = os.path.join(config.BASE_URL, url_key)
-    #     # build short_url as link & stylize here
-    #     url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
-    #
-    #     flash(Markup(url_out), 'alert-success')
-    #     return redirect(url_for('home'))
-    #
-    # return render_template('pages/index.html', login_form=login_form, url_form=url_form)
 
-# fresh login
+# in case we need a fresh login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
@@ -180,7 +174,7 @@ def logout():
 
 @app.route('/about')
 def about():
-    return render_template('pages/placeholder.about.html')
+    return render_template('pages/about.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -208,11 +202,13 @@ def invite():
         try:
             mailgun = user.send_activation_email()
         except:
-            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite." % user.email)
+            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite."
+                             % user.email)
             flash(message, category='alert-danger')
             return redirect(url_for('invite'))
         if mailgun.status_code != 200:
-            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite." % user.email)
+            message = Markup("There was an error sending an invitation to <b>%s</b>. Go ahead and try sending another invite."
+                             % user.email)
             flash(message, category='alert-danger')
             return redirect(url_for('invite'))
         
@@ -222,11 +218,11 @@ def invite():
 
     return render_template('forms/invite.html', form = form)
 
-
-@app.route('/forgot')
-def forgot():
-    form = ForgotForm(request.form)
-    return render_template('forms/forgot.html', form = form)
+# Not currently implemented
+# @app.route('/forgot')
+# def forgot():
+#     form = ForgotForm(request.form)
+#     return render_template('forms/forgot.html', form = form)
 
 @app.route('/activate', methods=['GET', 'POST'])
 def activate():
@@ -236,7 +232,6 @@ def activate():
     check_code = models.InviteUser.query.filter_by(activation_code=code).first()
     check_email = models.InviteUser.query.filter_by(email=email).first()
     check = check_email
-
 
     # Email & code must be in database
     if check_code is None or check_email is None:
@@ -275,9 +270,10 @@ def activate():
         return redirect(url_for('home'))
     return render_template('forms/activate.html', form=form, email=email)
 
-# Shortlink Handler
 
-@app.route('/<regex("[@,%40][0-9a-zA-Z]{7}"):shorturl>')
+### Shortlink Handler ###
+
+@app.route('/<regex("[+][0-9a-zA-Z]{7}"):shorturl>')
 def example(shorturl):
     shorturl = shorturl.lstrip('@')
     url = models.ReverseUrl(shorturl)
@@ -293,20 +289,15 @@ def rawdump():
     urls =  models.Url.query.all()
     raw = ["shortlink, source_url"]
     for url in urls:
-        raw.append("@%s, %s" %(url.shortlink, url.source))
+        raw.append("+%s, %s" %(url.shortlink, url.source))
     raw_string = ('\n').join(raw)
     return Response(raw_string, mimetype="text/plain")
 
 @app.route('/top10')
 def top10():
-    top_urls =  models.Url.query.order_by(models.Url.counter.desc()).limit(10).all()
+    top_urls = models.Url.query.order_by(models.Url.counter.desc()).limit(10).all()
     return render_template('pages/top10.html', urls=top_urls)
 
-login_manager.refresh_view = "login"
-login_manager.needs_refresh_message = (
-    u"To protect your account, please reauthenticate to access this page."
-)
-login_manager.needs_refresh_message_category = "alert-info"
 
 @app.route('/changepassword', methods=['GET', 'POST'])
 @fresh_login_required
@@ -318,6 +309,7 @@ def changepassword():
         flash("Your password has been successfully changed!", 'alert-success')
         return redirect(url_for('home'))
     return render_template('forms/changepass.html', form=pass_form)
+
 
 # Error handlers.
 

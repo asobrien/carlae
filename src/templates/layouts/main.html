@@ -11,8 +11,8 @@
 
 <!-- styles -->
 <link type="text/css" rel="stylesheet" href="/static/css/font-awesome-3.2.1.min.css" />
-<link type="text/css" rel="stylesheet" href="/static/css/bootstrap-3.0.1.min.css">
-<link type="text/css" rel="stylesheet" href="/static/css/bootstrap-theme-3.0.1.min.css" />
+<link type="text/css" rel="stylesheet" href="/static/css/bootstrap-3.1.1.min.css">
+<link type="text/css" rel="stylesheet" href="/static/css/bootstrap-theme-3.1.1.min.css" />
 <link type="text/css" rel="stylesheet" href="/static/css/layout.main.css" />
 <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
 <link type="text/css" rel="stylesheet" href="/static/css/main.responsive.css" />
@@ -55,10 +55,11 @@
 
               <!-- Tools Dropdown -->
               <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" title="Administration"><i class="icon icon-dashboard"></i><b class="caret"></b></a>
+              <a class="dropdown-toggle" data-toggle="dropdown" title="Dashboard"><i class="icon icon-dashboard" style='font-size: 1.25em'></i><b class="caret"></b>
+                  <span class="hidden-sm hidden-md hidden-lg"> Dashboard</span></a>
               <ul class="dropdown-menu">
                 <li><a href="{{ url_for('about') }}"><i class="glyphicon glyphicon-info-sign"></i> About</a></li>
-                <li><a href=""><i class="glyphicon glyphicon-stats"></i> Top 10 List</a></li>
+                <li><a href="{{ url_for('top10') }}"><i class="glyphicon glyphicon-stats"></i> Top 10 List</a></li>
 
                 <li class="divider"></li>
                 <li class="dropdown-header">Utilities</li>
@@ -69,7 +70,8 @@
             {% if g.user.is_authenticated() %}
               <!-- Settings Dropdown -->
               <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" title="Administration"><i class="icon icon-cog"></i><b class="caret"></b></a>
+              <a class="dropdown-toggle" data-toggle="dropdown" title="Admin Tools"><i class="icon icon-cog" style='font-size: 1.25em'></i><b class="caret"></b>
+                <span class="hidden-sm hidden-md hidden-lg"> Admin Tools</span></a>
               <ul class="dropdown-menu">
                 <li><a href="{{ url_for('invite') }}"><i class="glyphicon glyphicon-user"></i> Send an invitation</a></li>
                 <li class="divider"></li>
@@ -83,7 +85,7 @@
           </ul>
             {% if g.user.is_authenticated() %}
           <ul class="nav navbar-nav pull-right">
-            <li><a href="{{ url_for('logout') }}" title="Logout"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+            <li><a href="{{ url_for('logout') }}" title="Logout"><i class="glyphicon glyphicon-log-out" style='font-size: 1.25em'></i><span class="hidden-sm hidden-md hidden-lg"> Logout</span></a></li>
           </ul>
             {% endif %}
         </div><!--/.nav-collapse -->

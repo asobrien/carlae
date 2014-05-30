@@ -38,6 +38,9 @@ from collections import OrderedDict
 import urllib
 import os
 from flask import Markup
+import mail
+import config
+import shortener
 
 #----------------------------------------------------------------------------#
 # DB Config.
@@ -77,19 +80,6 @@ class User(db.Model):
             for var, val in vars(uname).iteritems():
                 setattr(self, var, val)
 
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return unicode(self.id)
-
     def create_user(self, password):
         user = User(self.email)
         user.password = bcrypt.generate_password_hash(password)
@@ -119,8 +109,23 @@ class User(db.Model):
         user.password = bcrypt.generate_password_hash(password)  # update pass
         db.session.commit()
 
+    ### Flask-Login required methods ###
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return unicode(self.id)
+    ### END Flask-Login required methods ###
+
     def __repr__(self):
         return '<User %r>' % self.email
+
 
 
 class InviteUser(db.Model):
@@ -173,7 +178,6 @@ class InviteUser(db.Model):
         # GET THE LATEST FROM THE DATABASE
         usr = InviteUser.query.get(self.id)
         usr.generate_activation_url()
-
         from_email = config.APP_EMAIL
         to_list = [usr.email]
         subject = "Activate your account"
@@ -194,36 +198,40 @@ class InviteUser(db.Model):
 
 
 
-import mail
-import config
-
-
 class Url(db.Model):
     __tablename__ = "urls"
     id = db.Column(db.Integer, primary_key=True)
     source = db.Column(db.String(1500), unique=True, nullable=False)
-    shortlink = db.Column(db.String(6), unique=True, nullable=False)
+    shortlink = db.Column(db.String(6), nullable=True)
     counter = db.Column(db.Integer, default=0)
 
     def __init__(self, source_url):
+        # commit the source_url (if not exists)
+        # get the id
+        # generate the shortlink
+        # commit the shortlink
         self.source = self.cleanup_url(source_url)
         self.already_exits()
         if self.shortlink is None:
-            self.shortlink = self.generate_shortlink(self.source)
-            self._make_shortlink_unique()  # short links need to unique so let's ensure this
-            self.add_url_to_db()
+            self.add_url_to_db()  # commits to db, get an id this way
+            self.generate_shortlink()
+            db.session.commit() # update the db
 
     def already_exits(self):
         url = Url.query.filter_by(source=self.source).first()
         if url is not None:
             self.shortlink = url.shortlink
+            self.id = url.id
+            self.counter = url.counter
         else:
             self.shortlink = None
 
-    def generate_shortlink(self, source_url):
-        url_digest = md5(source_url).digest()
-        encode = base64.b32encode(url_digest).lower()
-        return encode[0:7]
+    def generate_shortlink(self):
+        # Provides 34359738368 unique combinations
+        # url_digest = md5(source_url).digest()
+        # encode = base64.b32encode(url_digest).lower()
+        # return encode[0:7]
+        self.shortlink = shortener.encode_id(self.id)
 
     def cleanup_url(self, source_url):
         source_url = self.check_protocol(source_url)
@@ -250,16 +258,13 @@ class Url(db.Model):
 
 
 
-
-
 class ReverseUrl(object):
     def __init__(self, shortlink):
         self.shortlink = shortlink
 
-
     def get_source_url(self):
         shortlink = self.shortlink
-        source_url = Url.query.filter_by(shortlink=shortlink).first()
+        source_url = Url.query.get(shortener.decode_id(shortlink))
         if source_url is not None:
             self.id = source_url.id
             self.update_counter()
@@ -270,11 +275,6 @@ class ReverseUrl(object):
         rec = Url.query.get(self.id)
         rec.counter = rec.counter + 1
         db.session.commit()
-
-
-
-
-
 
 
 
