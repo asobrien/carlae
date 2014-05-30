@@ -120,19 +120,6 @@ def about():
     return render_template('pages/about.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm(request.form)
-    if request.method == 'POST':
-        user = models.User(request.form['name'])
-        password = user.generate_password()
-        user.create_user(request.form['email'], password)
-        message = "User: %s\nPassword: %s" % (user.username, password)
-        flash(message, category="alert-info")
-        return redirect(url_for('home'))
-    return render_template('forms/register.html', form = form)
-
-
 @app.route('/invite', methods=['GET', 'POST'])
 def invite():
     form = InviteUserForm(request.form)
