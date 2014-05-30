@@ -2,6 +2,7 @@ __author__ = 'aobrien'
 
 """This module incorporates email sending using mailgun."""
 
+import config
 import requests
 
 # Enter the domain associated with your Mailgun account here

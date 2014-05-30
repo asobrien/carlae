@@ -25,8 +25,8 @@
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ url.counter }}</td>
-          <td>{{ url.shortlink }}</td>
-          <td><a href="{{ url.source }}" title="{{ url.shortlink }}">{{ url.source }}</a></td>
+          <td>{{ '+' + url.shortlink }}</td>
+          <td><a href="{{ url.source }}" title="{{ '+' + url.shortlink }}">{{ url.source }}</a></td>
         </tr>
       {% endfor %}
       </tbody>

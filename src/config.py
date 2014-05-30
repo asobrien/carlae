@@ -23,6 +23,10 @@ BASE_URL = 'http://oxygen.local:5000'
 APP_EMAIL = 'admin@example.com'
 APP_EMAIL_NAME = 'carlae'  # or None if you don't want to use an name for the address book
 
+# We use Mailgun to send emails, enter credentials here
+MAILGUN_DOMAIN = "example.com"
+MAILGUN_API_KEY = "APIKEY_GOES_HERE"
+
 # Set the message sent on invitation here
 INVITATION_EMAIL_TEMPLATE = u"""
 Howdy,

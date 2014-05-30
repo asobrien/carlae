@@ -2,8 +2,8 @@
 # Imports.
 #----------------------------------------------------------------------------#
 
-from flask import *  # do not use '*'; actually input the dependencies.
-from flask import flash, redirect, Markup
+# from flask import *  # do not use '*'; actually input the dependencies.
+from flask import Flask, flash, redirect, Markup, g, render_template, request, url_for, Response
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 from flask_reggie import Reggie  # Regex Routing
@@ -69,10 +69,11 @@ def home():
         url_form = UrlForm(request.form)
         if url_form.validate_on_submit():
             url = models.Url(request.form['url'])
-            url_key = '@' + url.shortlink
+            url_key = '+' + url.shortlink
             short_url = os.path.join(config.BASE_URL, url_key)
             # build short_url as link & stylize here
-            url_out = "<h2 class='text-center'><a href='%s'>%s</a></h2>" % (short_url, short_url)
+            url_out = "<h3 class='text-center'>Here's your shortlink:</h3>" \
+                      "<h2 class='text-center'><a class='alert-link' href='%s'>%s</a></h2>" % (short_url, short_url)
             flash(Markup(url_out), 'alert-success')
             return redirect(url_for('home'))
         return render_template("pages/index.html", form=url_form)
@@ -198,9 +199,9 @@ def activate():
 
 ### Shortlink Handler ###
 
-@app.route('/<regex("[+][0-9a-zA-Z]{7}"):shorturl>')
+@app.route('/<regex("[\+][0-9a-zA-Z]{6}"):shorturl>')
 def example(shorturl):
-    shorturl = shorturl.lstrip('@')
+    shorturl = shorturl.lstrip('+')
     url = models.ReverseUrl(shorturl)
     url.get_source_url()
     if url.source is not None:
