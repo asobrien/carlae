@@ -2,8 +2,8 @@
 # Imports.
 #----------------------------------------------------------------------------#
 
-from app import db
-from app import bcrypt
+from main import db
+from main import bcrypt
 import base64
 import urlparse
 import uuid
