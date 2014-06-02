@@ -4,11 +4,11 @@ import math
 # SRC: http://kvz.io/blog/2009/06/10/create-short-ids-with-php-like-youtube-or-tinyurl/
 ALPHABET = "bcdfghjkmnpqrstvwxyz0123456789BCDFGHJKLMNPQRSTVWXYZ"  # no vowels, no l
 BASE = len(ALPHABET)
-MAXLEN = 6  # at least 1e10 combinations possible with 6 digits
+MINLEN = 2  # at least 1e10 combinations possible with 6 digits
 
 def encode_id(n):
 
-    pad = MAXLEN - 1
+    pad = MINLEN - 1
     n = int(n + pow(BASE, pad))
 
     s = []
@@ -35,7 +35,7 @@ def decode_id(n):
         t += 1
         if t > l: break
 
-    pad = MAXLEN - 1
+    pad = MINLEN - 1
     s = int(s - pow(BASE, pad))
 
     return int(s)
