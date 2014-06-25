@@ -23,7 +23,7 @@ License
 -------
 Carlae is released under the terms of the `MIT license`_.
 
-The MIT license is simple and very unrestrictive. See the `LICENSE.txt` file for the complete terms.
+The MIT license is simple and very unrestrictive. See the `LICENSE <LICENSE.txt>`_ file for the complete terms.
 
 
 .. _Flask: http://flask.pocoo.org/
