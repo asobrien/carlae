@@ -12,7 +12,7 @@ Instructions to follow.
 
 Dependencies
 ------------
-See `requirements.txt <src/requirements.txt` for a complete list of dependencies.
+See `requirements.txt <blob/master/src/requirements.txt>`_ for a complete list of dependencies.
 
 Carlae is built upon the `Flask`_ framework and utilizes various extensions. The UI is built upon `Bootstrap`_. Interfacing with the database is via `SQLAlchemy`_.
 
