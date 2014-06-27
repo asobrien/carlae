@@ -4,6 +4,8 @@
 
 from main import db
 from main import bcrypt
+# from carlae.main import db, bcrypt
+
 import base64
 import urlparse
 import uuid

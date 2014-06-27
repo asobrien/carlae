@@ -11,13 +11,15 @@ import logging
 from logging import Formatter, FileHandler
 from forms import *
 import os
-import config
+
 import datetime
 from flask.ext.login import LoginManager
 from flask.ext.login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 # app specific
 import models
+# import config
+# from carlae import config
 
 
 
@@ -27,7 +29,7 @@ import models
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object('carlae.config')
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 Reggie(app)
