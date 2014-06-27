@@ -1,0 +1,2 @@
+recursive-include carlae/templates *
+recursive-include carlae/static *
