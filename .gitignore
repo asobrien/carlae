@@ -3,3 +3,4 @@
 database.db
 *.pyc
 private.py
+*database.db
