@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 # Grabs the folder where the script runs.

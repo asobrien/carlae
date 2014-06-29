@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from carlae.models import db, User
 
 def initialize_db():

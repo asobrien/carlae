@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 __author__ = 'aobrien'
 
 """This module incorporates email sending using mailgun."""
