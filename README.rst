@@ -30,9 +30,7 @@ This will create a virualenv with a *python* interpreter, *pip*, *setuptools*, *
     
 and proceed with the installation instructions.
     
-This will create a virtual
 
-`conda` environment instructions.
 
 2. Get the source
 ~~~~~~~~~~~~~~~~~
