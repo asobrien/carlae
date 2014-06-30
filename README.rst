@@ -9,7 +9,7 @@ Installation
 ------------
 So you want to try this out on your own hardware? Follow the instructions below to install Carlae on your rig and start hacking!
 
-.. note:: You'll need to following software and tools on your system to demo Carlae: **sqlite3**, **pip**.
+    | You'll need to following software and tools on your system to demo Carlae: **sqlite3** & **pip**.
 
 
 1. [Optional] Create `virtualenv`
@@ -86,12 +86,16 @@ And point your browser to http://0.0.0.0:5000 and you should see the site runnin
 That's it. Have fun and hack away!
 
 
+
 Configuration
 -------------
-Configuration details to go here.
+Configuration details to follow.
 
 
+Issues
+------
 
+File bugs, issues, problems, etc., on the `issue tracker <https://github.com/asobrien/carlae/issues>`_.
 
 Dependencies
 ------------
