@@ -209,7 +209,7 @@ def activate():
 
 ### Shortlink Handler ###
 
-@app.route('/<regex("[\+][0-9a-zA-Z]{6}"):shorturl>')
+@app.route('/<regex("[\+][0-9a-zA-Z]{2,6}"):shorturl>')
 def example(shorturl):
     shorturl = shorturl.lstrip('+')
     url = models.ReverseUrl(shorturl)
