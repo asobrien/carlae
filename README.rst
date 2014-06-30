@@ -18,18 +18,19 @@ TODO: `virtualenv` instructions
 #. Get the source
 Download a zip or tar.gz of the source and extract to a directory of your choice. Do all of this from the command line by running the following commands:
 
-```
-curl -LO https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
-tar -zxvf v0.0.1.tar.gz
-cd carlae-0.0.1
-```
+.. code-block:: bash
+    curl -LO https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
+    tar -zxvf v0.0.1.tar.gz
+    cd carlae-0.0.1
+
 
 #. Install carlae
 Installation is straightforward.
-```
-cd /path/to/Carlae
-python setup.py develop
-```
+
+.. code-block:: bash
+    cd /path/to/Carlae
+    python setup.py develop
+
 
 #. Run script to install db
 You need to install the tables and create an initial user.
@@ -49,9 +50,10 @@ Open an interactive python shell (`$ python`) and execute the following:
 #. Run carlae
 
 Run the following command:
-```
-python carlae/main.py
-```
+
+.. code-block:: bash
+    python carlae/main.py
+
 
 And point your browser to http://0.0.0.0:5000 and you should see the site running.
 
