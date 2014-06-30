@@ -7,7 +7,7 @@ import sys
 from setuptools import setup, find_packages
 
 ### CONFIGURE BUILD VARIABLES
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 ### END OF CONFIGURATION
 
 
