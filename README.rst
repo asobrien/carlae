@@ -24,9 +24,9 @@ Download a `zip`_ or `tar.gz`_ of the source and extract to a directory of your 
 
 .. code-block:: bash
 
-    curl -LO https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
-    tar -zxvf v0.0.1.tar.gz
-    cd carlae-0.0.1
+    curl -LO https://github.com/asobrien/carlae/archive/v0.0.2.tar.gz
+    tar -zxvf v0.0.2.tar.gz
+    cd carlae-0.0.2
 
 
 3. Install Carlae
@@ -97,5 +97,5 @@ The MIT license is simple and very unrestrictive. See the `LICENSE <LICENSE>`_ f
 .. _Bootstrap: http://getbootstrap.com/
 .. _SQLAlchemy: http://www.sqlalchemy.org/
 .. _MIT license: http://en.wikipedia.org/wiki/MIT_License
-.. _zip: https://github.com/asobrien/carlae/archive/v0.0.1.zip
-.. _tar.gz: https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
+.. _zip: https://github.com/asobrien/carlae/archive/v0.0.2.zip
+.. _tar.gz: https://github.com/asobrien/carlae/archive/v0.0.2.tar.gz
