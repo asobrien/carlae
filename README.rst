@@ -64,7 +64,7 @@ Open an interactive python shell (:code:`$ python`) and execute the following:
 
     from carlae.utils import db
     db.initialize_db()  # creates tables
-    db.create_user("user@emai.com", "strong_password")  # creates initial user, replace credentials
+    db.create_user("user@email.com", "strong_password")  # creates initial user, replace credentials
     exit()
 
 
