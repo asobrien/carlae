@@ -19,6 +19,7 @@ TODO: `virtualenv` instructions
 Download a zip or tar.gz of the source and extract to a directory of your choice. Do all of this from the command line by running the following commands:
 
 .. code-block:: bash
+
     curl -LO https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
     tar -zxvf v0.0.1.tar.gz
     cd carlae-0.0.1
@@ -28,6 +29,7 @@ Download a zip or tar.gz of the source and extract to a directory of your choice
 Installation is straightforward.
 
 .. code-block:: bash
+
     cd /path/to/Carlae
     python setup.py develop
 
@@ -52,6 +54,7 @@ Open an interactive python shell (`$ python`) and execute the following:
 Run the following command:
 
 .. code-block:: bash
+
     python carlae/main.py
 
 
