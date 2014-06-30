@@ -16,10 +16,16 @@ TODO: `virtualenv` instructions
 `conda` environment instructions.
 
 #. Get the source
+Download a zip or tar.gz of the source and extract to a directory of your choice. Do all of this from the command line by running the following commands:
+
+```
+curl -LO https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
+tar -zxvf v0.0.1.tar.gz
+cd carlae-0.0.1
+```
 
 #. Install carlae
 Installation is straightforward.
-
 ```
 cd /path/to/Carlae
 python setup.py develop
@@ -46,11 +52,16 @@ Run the following command:
 python carlae/main.py
 ```
 
-And point your browser to <http://0.0.0.0:5000> and you should see the site running.
+And point your browser to http://0.0.0.0:5000 and you should see the site running.
 
 
 
 That's it. Have fun and hack away!
+
+
+Configuration
+-------------
+Configuration details to go here.
 
 
 
