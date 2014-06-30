@@ -38,6 +38,7 @@ Run the following to do so.
 Open an interactive python shell (`$ python`) and execute the following:
 
 .. code-block:: python
+
     from carlae.utils import db
     db.initialize_db()  # creates tables
     db.create_user("user@emai.com", "strong_password")  # creates initial user, replace credentials
