@@ -5,6 +5,9 @@ import os
 # Grabs the folder where the script runs.
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+# Demo mode, change to false in a production enviroment
+DEMO_MODE = True
+
 # Enable debug mode.
 DEBUG = True
 
@@ -13,7 +16,7 @@ CSRF_ENABLED = True
 
 # Secret key for session management. You can generate random strings here:
 # http://clsc.net/tools-old/random-string-generator.php
-SECRET_KEY = '31y1oI3SAKB6H-1q440a1JQa-xy_7xQ22HP8T02A4n9x3'
+SECRET_KEY = 'A_NICE_STRONG_RANDOM_SECRET_KEY_GOES_HERE'
 
 # Connect to the database
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db')
@@ -33,11 +36,17 @@ MAILGUN_API_KEY = "APIKEY_GOES_HERE"
 INVITATION_EMAIL_TEMPLATE = u"""
 Howdy,
 
-You've been invited to join carlae, a private, self-hosted bit shortener service.
+You've been invited to join Carlae, a URL shortening service.
 
-Go ahead and click the link (or paste into your browser) the link below to register & activate your account.
+Go ahead and use the link to register & activate your account:
 
 %s
 
+Activation codes eventually expire; request a new one if that's the case.
+
 Welcome!
 """
+
+# Development info
+CARLAE_VERSION = ''
+CARLAE_BUILD = ''
