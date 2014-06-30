@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #----------------------------------------------------------------------------#
@@ -21,7 +22,7 @@ from flask.ext.login import login_user, logout_user, login_required, current_use
 # app specific
 import models
 # import config
-# from carlae import config
+from carlae import config
 
 
 
@@ -64,6 +65,11 @@ def load_user(userid):
 @app.before_request
 def before_request():
     g.user = current_user
+
+if config.DEMO_MODE:
+    @app.route('/')
+    def index():
+        return redirect(url_for('home'))
 
 
 @app.route('/+', methods=['GET', 'POST'])
