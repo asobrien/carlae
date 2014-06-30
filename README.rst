@@ -11,12 +11,16 @@ So you want to try this out on your own hardware? Follow the instructions below 
 
 .. note:: You'll need to following software and tools on your system to demo Carlae: **sqlite3**, **pip**.
 
-#. [Optional] It is highly recommended you setup Carlae in a virtualenv. Here's how to create one:
+
+1. [Optional] Create `virtualenv`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+It is highly recommended you setup Carlae in a virtualenv. Here's how to create one:
 TODO: `virtualenv` instructions
 `conda` environment instructions.
 
-#. Get the source
-Download a zip or tar.gz of the source and extract to a directory of your choice. Do all of this from the command line by running the following commands:
+2. Get the source
+~~~~~~~~~~~~~~~~~
+Download a `zip`_ or `tar.gz`_ of the source and extract to a directory of your choice. Do all of this from the command line by running the following commands:
 
 .. code-block:: bash
 
@@ -25,7 +29,8 @@ Download a zip or tar.gz of the source and extract to a directory of your choice
     cd carlae-0.0.1
 
 
-#. Install carlae
+3. Install Carlae
+~~~~~~~~~~~~~~~~~
 Installation is straightforward.
 
 .. code-block:: bash
@@ -34,7 +39,8 @@ Installation is straightforward.
     python setup.py develop
 
 
-#. Run script to install db
+4. Run initialization scripts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 You need to install the tables and create an initial user.
 Run the following to do so.
 
@@ -49,8 +55,8 @@ Open an interactive python shell (`$ python`) and execute the following:
 
 
 
-#. Run carlae
-
+5. Run Carlae
+~~~~~~~~~~~~~
 Run the following command:
 
 .. code-block:: bash
@@ -59,7 +65,6 @@ Run the following command:
 
 
 And point your browser to http://0.0.0.0:5000 and you should see the site running.
-
 
 
 That's it. Have fun and hack away!
@@ -92,3 +97,5 @@ The MIT license is simple and very unrestrictive. See the `LICENSE <LICENSE>`_ f
 .. _Bootstrap: http://getbootstrap.com/
 .. _SQLAlchemy: http://www.sqlalchemy.org/
 .. _MIT license: http://en.wikipedia.org/wiki/MIT_License
+.. _zip: https://github.com/asobrien/carlae/archive/v0.0.1.zip
+.. _tar.gz: https://github.com/asobrien/carlae/archive/v0.0.1.tar.gz
