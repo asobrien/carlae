@@ -58,7 +58,7 @@ Installation is straightforward.
 You need to install the tables and create an initial user.
 Run the following to do so.
 
-Open an interactive python shell (`$ python`) and execute the following:
+Open an interactive python shell (:code:`$ python`) and execute the following:
 
 .. code-block:: python
 
