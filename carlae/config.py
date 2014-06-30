@@ -22,7 +22,7 @@ SECRET_KEY = 'A_NICE_STRONG_RANDOM_SECRET_KEY_GOES_HERE'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database.db')
 
 # Set the root URL for the site
-BASE_URL = 'http://oxygen.local:5000'
+BASE_URL = 'http://0.0.0.0:5000'
 
 # Set the email address for the service (e.g., admin@example.com)
 APP_EMAIL = 'admin@example.com'
