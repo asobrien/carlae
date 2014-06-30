@@ -14,8 +14,24 @@ So you want to try this out on your own hardware? Follow the instructions below 
 
 1. [Optional] Create `virtualenv`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-It is highly recommended you setup Carlae in a virtualenv. Here's how to create one:
-TODO: `virtualenv` instructions
+It is highly recommended you setup Carlae in a virtualenv. See `these instructions <http://docs.python-guide.org/en/latest/dev/virtualenvs/>`_ to get one up and running.
+
+If you're using the `Anaconda python distribution <https://store.continuum.io/cshop/anaconda/>`_, you'll need to create a new environment like so:
+
+.. code-block:: base
+    
+    conda create -n carlae-app pip
+    
+This will create a virualenv with a *python* interpreter, *pip*, *setuptools*, *sqlite3*, and few other dependencies. Now activate it:
+
+.. code-block:: bash
+
+    source activate carlae-app
+    
+and proceed with the installation instructions.
+    
+This will create a virtual
+
 `conda` environment instructions.
 
 2. Get the source
