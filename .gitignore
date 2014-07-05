@@ -5,3 +5,5 @@ database.db
 private.py
 *database.db
 carlae.egg-info
+_posts/_site
+_site
