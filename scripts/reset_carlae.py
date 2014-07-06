@@ -1,9 +1,14 @@
 #! /var/www/carlae/venv/bin/python
+# -*- coding: utf-8 -*-
 
-"""This script resets carlae.
+"""A script to reinstall Carlae.
+
+This script was designed for the Carlae demo site. It's intended usage is to
+be called by `cron` to reinitialize the entire site at some specified
+interval.
+
 """
 
-# Dependencies
 import subprocess
 import os
 import sys
