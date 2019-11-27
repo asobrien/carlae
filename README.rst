@@ -4,7 +4,7 @@ A URL shortener for your domain.
 
 **ARCHIVE NOTICE: This repository is no longer under active development. The code here is compatible with python2, no effort has been made to make it work with python3.**
 
-Try out a ~~`live demo <http://carlae.com>`_~~ to see Carlae in action.
+Try out a ~~live demo~~ to see Carlae in action.
 
 
 Installation
