@@ -2,7 +2,7 @@ flask>=1.0.0
 Flask-Bcrypt==0.6.0
 Flask-Login==0.2.11
 Flask-Reggie==0.0.2
-Flask-SQLAlchemy==1.0
+Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.9.5
 Jinja2>=2.10.1
 MarkupSafe==0.23
