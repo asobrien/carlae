@@ -7,8 +7,8 @@
 
 # from flask import *  # do not use '*'; actually input the dependencies.
 from flask import Flask, flash, redirect, Markup, g, render_template, request, url_for, Response
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 from flask_reggie import Reggie  # Regex Routing
 import logging
 from logging import Formatter, FileHandler
@@ -16,8 +16,8 @@ from forms import *
 import os
 
 import datetime
-from flask.ext.login import LoginManager
-from flask.ext.login import login_user, logout_user, login_required, current_user, fresh_login_required
+from flask_login import LoginManager
+from flask_login import login_user, logout_user, login_required, current_user, fresh_login_required
 
 # app specific
 import models
@@ -152,7 +152,7 @@ def invite():
                              % user.email)
             flash(message, category='alert-danger')
             return redirect(url_for('invite'))
-        
+
         message = Markup("An invitation email has been sent to <b>%s</b>" % user.email)
         flash(message, category='alert-success')
         return redirect(url_for('invite'))
